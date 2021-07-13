@@ -16,20 +16,20 @@
 # define error_file "2_error"
 # define MV_x_file "3_motion_vector_x.y"
 # define MV_y_file "4_motion_vector_y.y"
-# define Quantization_file "5_¸ò.y"
+# define Quantization_file "5_ëª«.y"
 # define current_encoding_file "0_current_encodiong.y"
 # define prediction_defore "0_prediction.y"
-# define N_intra 4// °ø°£¿¹Ãø block
-# define N_tempo 16// ½Ã°£¿¹Ãø block
-# define use_psnr 1// (0 : psnr ÃøÁ¤ x   , 1 : psnr ÃøÁ¤ o ) 
+# define N_intra 4// ê³µê°„ì˜ˆì¸¡ block
+# define N_tempo 16// ì‹œê°„ì˜ˆì¸¡ block
+# define use_psnr 1// (0 : psnr ì¸¡ì • x   , 1 : psnr ì¸¡ì • o ) 
 # define FALSE 0
 # define TRUE 1
-# define sample 1.75 // ¾çÀÚÈ­ °è¼ö
-# define pre_N 9 // ¿¹Ãø ¹æÇâ (4 or 9)
+# define sample 1.75 // ì–‘ìí™” ê³„ìˆ˜
+# define pre_N 9 // ì˜ˆì¸¡ ë°©í–¥ (4 or 9)
 //====option================
 # define SR 4// search range => 4x4, 8x8, 16x16
 
-//ÆÄÀÏ ÀĞ±â
+//íŒŒì¼ ì½ê¸°
 unsigned char* readFile(char* s, int size_row, int size_col) {
 	//FILE* input_img = fopen(in_file, "rb");
 	FILE* input_img;
@@ -38,7 +38,7 @@ unsigned char* readFile(char* s, int size_row, int size_col) {
 
 	org_img = (unsigned char*)malloc(sizeof(unsigned char)*(size_row*size_col));
 	if (input_img == NULL) {
-		puts("input ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ ");
+		puts("input íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨ ");
 		return NULL;
 	}
 	else {
@@ -50,7 +50,7 @@ unsigned char* readFile(char* s, int size_row, int size_col) {
 	free(org_img);
 }
 
-//ÆÄÀÏ ÀĞ±â
+//íŒŒì¼ ì½ê¸°
 int* ReadFile_int(char* s, int size_row, int size_col) {
 	//FILE* input_img = fopen(in_file, "rb");
 	FILE* input;
@@ -59,7 +59,7 @@ int* ReadFile_int(char* s, int size_row, int size_col) {
 	fopen_s(&input, s, "rb");
 	org = (int*)malloc(sizeof(int)*(org_row*org_col));
 	if (input == NULL) {
-		puts("input ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ ");
+		puts("input íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨ ");
 		return NULL;
 	}
 	else {
@@ -71,13 +71,13 @@ int* ReadFile_int(char* s, int size_row, int size_col) {
 	free(org);
 }
 
-//unsigned char Çü ÆÄÀÏ ¾²±â
+//unsigned char í˜• íŒŒì¼ ì“°ê¸°
 unsigned char* WriteFile_U(unsigned char* out_img, char* s, int size_row, int size_col) {
 	//FILE* output_img = fopen(out_file, "wb");
 	FILE* output_img;
 	fopen_s(&output_img, s, "wb");
 	if (output_img == NULL) {
-		puts("output ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ");
+		puts("output íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨");
 		return NULL;
 	}
 	else {
@@ -89,12 +89,12 @@ unsigned char* WriteFile_U(unsigned char* out_img, char* s, int size_row, int si
 
 }
 
-// int Çü ÆÄÀÏ ¾²±â
+// int í˜• íŒŒì¼ ì“°ê¸°
 int* WriteFile_I(int* out_img, char* s, int size_row, int size_col) {
 	FILE* output_img;
 	fopen_s(&output_img, s, "wb");
 	if (output_img == NULL) {
-		puts("output ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ");
+		puts("output íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨");
 		return NULL;
 	}
 	else {
@@ -105,7 +105,7 @@ int* WriteFile_I(int* out_img, char* s, int size_row, int size_col) {
 	return out_img;
 }
 
-//MSE & PSNR **ÀÔ·ÂÀº uchar Çü**
+//MSE & PSNR **ì…ë ¥ì€ uchar í˜•**
 double MSE_f(unsigned char* sp_img, char* s)
 {
 	double MSE;
@@ -136,12 +136,12 @@ double MSE_f(unsigned char* sp_img, char* s)
 	return MSE;
 }
 
-// error sampling, ¾çÀÚÈ­ °è¼ö¸¦ ³ª´²ÁÜ =================¼öÁ¤ÇÔ====decoder µµ °°ÀÌ ¹Ù²ãÁÙ °Í=============
+// error sampling, ì–‘ìí™” ê³„ìˆ˜ë¥¼ ë‚˜ëˆ ì¤Œ =================ìˆ˜ì •í•¨====decoder ë„ ê°™ì´ ë°”ê¿”ì¤„ ê²ƒ=============
 int* sampling_error(int* error, int type, int size_row, int size_col) {
 	int n;
 	int* error_d = NULL;
 	error_d = (int*)malloc(sizeof(int)*(size_row*size_col));
-	//type ÀÌ 0ÀÌ¸é error ¸¦ ¾çÀÚÈ­¸¸ ÇÔ
+	//type ì´ 0ì´ë©´ error ë¥¼ ì–‘ìí™”ë§Œ í•¨
 	if (type == 0) {
 		for (n = 0; n < size_row*size_col; n++) {
 			if ((*(error + n)) > 0) {
@@ -157,7 +157,7 @@ int* sampling_error(int* error, int type, int size_row, int size_col) {
 		return error_d;
 	}
 
-	//type = 1 ¾çÀÚÈ­µÈ ¿¡·¯¸¦ ´Ù½Ã º¹±¸ÇÔ 
+	//type = 1 ì–‘ìí™”ëœ ì—ëŸ¬ë¥¼ ë‹¤ì‹œ ë³µêµ¬í•¨ 
 	else if (type == 1) {
 		for (n = 0; n < size_row*size_col; n++) {
 			*(error_d + n) = (int)((double)(*(error + n))*sample + 0.5);
@@ -178,10 +178,10 @@ int* sampling_error(int* error, int type, int size_row, int size_col) {
 }
 
 
-//°ø°£¿¹Ãø=============================================================================================================
+//ê³µê°„ì˜ˆì¸¡=============================================================================================================
 
-//ºí·ÏÀÇ ÀÌ¿ôÇÑ ÇÈ¼¿ Ãà·ÂÇÏ±â
-unsigned char* neighbor_pixels(unsigned char* org_img, int i, int j) { // i = Çà, j = ¿­
+//ë¸”ë¡ì˜ ì´ì›ƒí•œ í”½ì…€ ì¶•ë ¥í•˜ê¸°
+unsigned char* neighbor_pixels(unsigned char* org_img, int i, int j) { // i = í–‰, j = ì—´
 	int u, v;
 	int w;
 	unsigned char* neighbor_pix = NULL;
@@ -237,7 +237,7 @@ unsigned char* neighbor_pixels(unsigned char* org_img, int i, int j) { // i = Çà
 	free(neighbor_pix);
 }
 
-//¿¹Ãø ºí·Ï Ãâ·Â  ==========mode 3,4 °íÃÄ¼­ decoding ¿¡ º¹»çÇÏ±â
+//ì˜ˆì¸¡ ë¸”ë¡ ì¶œë ¥  ==========mode 3,4 ê³ ì³ì„œ decoding ì— ë³µì‚¬í•˜ê¸°
 unsigned char* pre_block_intra(unsigned char* neighbor_pix, int type, int ii, int jj) {
 	unsigned char* block = NULL;
 
@@ -290,13 +290,13 @@ unsigned char* pre_block_intra(unsigned char* neighbor_pix, int type, int ii, in
 			m = (sum + 4) >> 3;
 			
 		}
-		else if (ii - 1 < 0 && jj - 1 >= 0) { // ¼¼·Î ¸·´ë = 128
+		else if (ii - 1 < 0 && jj - 1 >= 0) { // ì„¸ë¡œ ë§‰ëŒ€ = 128
 			for (i = 0; i < N_intra; i++) {
 				sum += *(neighbor_pix + i);
 			}
 			m = (unsigned char)(sum / ((double)N_intra) + 0.5);
 		}
-		else if (ii - 1 >= 0 && jj - 1 < 0) { // °¡·Î ¸·´ë = 128
+		else if (ii - 1 >= 0 && jj - 1 < 0) { // ê°€ë¡œ ë§‰ëŒ€ = 128
 			for (i = 0; i < N_intra; i++) {
 				sum += *(neighbor_pix + N_intra + i);
 			}
@@ -464,8 +464,8 @@ unsigned char* pre_block_intra(unsigned char* neighbor_pix, int type, int ii, in
 	free(block);
 }
 
-//ÇÑ block label À» °áÁ¤
-int* label_finder(unsigned char* org_img, int i, int j) { //i = ¿­, j = Çà
+//í•œ block label ì„ ê²°ì •
+int* label_finder(unsigned char* org_img, int i, int j) { //i = ì—´, j = í–‰
 	int u, v;
 	double sum = 0.0;
 	int W;
@@ -476,7 +476,7 @@ int* label_finder(unsigned char* org_img, int i, int j) { //i = ¿­, j = Çà
 	unsigned char* block_pre = NULL;
 	int* Energy = NULL;
 	int* error = NULL;
-	int* out = NULL; // Ãâ·Â °ª (label + error)
+	int* out = NULL; // ì¶œë ¥ ê°’ (label + error)
 
 
 
@@ -538,7 +538,7 @@ int* label_finder(unsigned char* org_img, int i, int j) { //i = ¿­, j = Çà
 	free(out);
 }
 
-//test ¿ë====================
+//test ìš©====================
 void sort_Label(unsigned char* Label_arr) {
 
 	int* label_N = NULL;
@@ -566,7 +566,7 @@ void sort_Label(unsigned char* Label_arr) {
 	free(label_N);
 }
 
-//test ¿ë====================
+//test ìš©====================
 void sort_Error(int* Error) {
 
 	int* error_N = NULL;
@@ -594,8 +594,8 @@ void sort_Error(int* Error) {
 	free(error_N);
 }
 
-//(N/2)*(N/2) Â÷¿øÀÇ °¢ block label ÀÌ ÀúÀåµÈ ¹è¿­À» ¸¸µå´Â ÇÔ¼ö ================½ÇÇà ¾ÈµÊ
-unsigned char* encoding_intra(unsigned char* org_img) { // ³ªÁß¿¡ int ÇüÀ» unsigned char ÇüÀ¸·Î ¹Ù²ãº¸±â
+//(N/2)*(N/2) ì°¨ì›ì˜ ê° block label ì´ ì €ì¥ëœ ë°°ì—´ì„ ë§Œë“œëŠ” í•¨ìˆ˜ ================ì‹¤í–‰ ì•ˆë¨
+unsigned char* encoding_intra(unsigned char* org_img) { // ë‚˜ì¤‘ì— int í˜•ì„ unsigned char í˜•ìœ¼ë¡œ ë°”ê¿”ë³´ê¸°
 	int i, j, w;
 	int u, v;
 	int n = 0;//===========================
@@ -626,7 +626,7 @@ unsigned char* encoding_intra(unsigned char* org_img) { // ³ªÁß¿¡ int ÇüÀ» unsig
 
 	for (i = 0; i < org_col; i += N_intra) {
 		for (j = 0; j < org_row; j += N_intra) {
-			//label, error °¢°¢ ÀúÀå
+			//label, error ê°ê° ì €ì¥
 			buff = label_finder(recontruct_img, i, j);
 			label = *(buff);
 			//==============================================================
@@ -638,12 +638,12 @@ unsigned char* encoding_intra(unsigned char* org_img) { // ³ªÁß¿¡ int ÇüÀ» unsig
 			for (w = 0; w < N_intra*N_intra; w++) {
 				*(error + w) = *(buff + w + 1);
 			}
-			error_sampling = sampling_error(error, 0, N_intra, N_intra);//error ¸¦ ¾çÀÚÈ­ 
-			error = sampling_error(error_sampling, 1, N_intra, N_intra);//¾çÀÚÈ­µÈ error º¹±¸
+			error_sampling = sampling_error(error, 0, N_intra, N_intra);//error ë¥¼ ì–‘ìí™” 
+			error = sampling_error(error_sampling, 1, N_intra, N_intra);//ì–‘ìí™”ëœ error ë³µêµ¬
 
-			neighbor_pix = neighbor_pixels(recontruct_img, j, i);//µÎ¹øÂ° ÀÎ¼ö : Çà, ¼¼¹øÂ° ÀÎ¼ö : ¿­
+			neighbor_pix = neighbor_pixels(recontruct_img, j, i);//ë‘ë²ˆì§¸ ì¸ìˆ˜ : í–‰, ì„¸ë²ˆì§¸ ì¸ìˆ˜ : ì—´
 			block_pre = pre_block_intra(neighbor_pix, label, i, j);
-			//¿øº» ¿µ»óÀÇ ÇØ´ç ºí·Ï ´ëÃ¼, out ¸¶Áö¸·¿¡ label À» ÀúÀå
+			//ì›ë³¸ ì˜ìƒì˜ í•´ë‹¹ ë¸”ë¡ ëŒ€ì²´, out ë§ˆì§€ë§‰ì— label ì„ ì €ì¥
 			for (v = 0; v < N_intra; v++) {
 				for (u = 0; u < N_intra; u++) {
 					int temp = *(block_pre + N_intra*v + u) + *(error + N_intra*v + u);
@@ -655,7 +655,7 @@ unsigned char* encoding_intra(unsigned char* org_img) { // ³ªÁß¿¡ int ÇüÀ» unsig
 					else
 						*(recontruct_img + (i + v)*org_row + (j + u)) = temp;
 
-					//out ¿¡ ¾çÀÚÈ­µÈ error  ÀúÀå
+					//out ì— ì–‘ìí™”ëœ error  ì €ì¥
 					*(error_array + (i + v)*org_row + (j + u)) = *(error_sampling + N_intra*v + u);
 				}
 			}
@@ -682,7 +682,7 @@ unsigned char* encoding_intra(unsigned char* org_img) { // ³ªÁß¿¡ int ÇüÀ» unsig
 }
 //==============================================================================================================
 
-//(¹Ì¿Ï)motion vector Á¤º¸¸¦ ¹ŞÀ¸¸é, ¿¹Ãø ºí·Ï Ãâ·Â
+//(ë¯¸ì™„)motion vector ì •ë³´ë¥¼ ë°›ìœ¼ë©´, ì˜ˆì¸¡ ë¸”ë¡ ì¶œë ¥
 unsigned char* pre_block_tempo(unsigned char* before_dec_img, int i, int j, int mv_x, int mv_y) {
 	unsigned char* block_pre = NULL;
 	int u, v;
@@ -698,7 +698,7 @@ unsigned char* pre_block_tempo(unsigned char* before_dec_img, int i, int j, int 
 	free(block_pre);
 }
 
-//(¹Ì¿Ï)ºí·ÏÀÇ ÇöÀç À§Ä¡¸¦ ÁÖ¸é, search range¸¦ ±¸ÇÏ°í, ±×¾È¿¡ °¡Àå ÀûÀıÇÑ ºí·ÏÀ» ÇâÇÏ´Â motion vector ±¸ÇÏ±â==============°¡Àå°¡¸®¸¦ ³Ñ¾î°¥¶§ °í·ÁÇÏ´Â°Å Ãß°¡ÇÏ±â
+//(ë¯¸ì™„)ë¸”ë¡ì˜ í˜„ì¬ ìœ„ì¹˜ë¥¼ ì£¼ë©´, search rangeë¥¼ êµ¬í•˜ê³ , ê·¸ì•ˆì— ê°€ì¥ ì ì ˆí•œ ë¸”ë¡ì„ í–¥í•˜ëŠ” motion vector êµ¬í•˜ê¸°==============ê°€ì¥ê°€ë¦¬ë¥¼ ë„˜ì–´ê°ˆë•Œ ê³ ë ¤í•˜ëŠ”ê±° ì¶”ê°€í•˜ê¸°
 int* mv_finder(unsigned char* current_img, unsigned char* before_dec_img, int i, int j) {
 	int u, v;
 	int n, m;
@@ -742,18 +742,18 @@ int* mv_finder(unsigned char* current_img, unsigned char* before_dec_img, int i,
 		bottom_cul = (org_col - 1) - (i + N_tempo - 1);
 	else
 		bottom_cul = SR;
-	//printf("left row :%d\n", left_row);//test ¿ë===============
-	//printf("right row :%d\n", right_row);//test ¿ë===============
-	//printf("top cul :%d\n", top_cul);//test ¿ë===============
-	//printf("bottom cul :%d\n", bottom_cul);//test ¿ë===============
+	//printf("left row :%d\n", left_row);//test ìš©===============
+	//printf("right row :%d\n", right_row);//test ìš©===============
+	//printf("top cul :%d\n", top_cul);//test ìš©===============
+	//printf("bottom cul :%d\n", bottom_cul);//test ìš©===============
 
 	energy = (int*)malloc(sizeof(int) * (bottom_cul - top_cul + 1)*(right_row - left_row + 1));
-	//search_range ¾È¿¡ ÇÏ³ªÀÇ 16 by 16 ºí·ÏÀ» ¸¸µé¾î(¸¸¾à ¿µ»óÀÇ °¡ÀåÀÚ¸®¸¦ ³Ñ¾î°£´Ù¸é, -1 ÀúÀå) º¹¿ø¿µ»ó°úÀÇ energy ÀúÀå
+	//search_range ì•ˆì— í•˜ë‚˜ì˜ 16 by 16 ë¸”ë¡ì„ ë§Œë“¤ì–´(ë§Œì•½ ì˜ìƒì˜ ê°€ì¥ìë¦¬ë¥¼ ë„˜ì–´ê°„ë‹¤ë©´, -1 ì €ì¥) ë³µì›ì˜ìƒê³¼ì˜ energy ì €ì¥
 	for (u = top_cul; u <= bottom_cul; u++) {
 		for (v = left_row; v <= right_row; v++) {
 			*(energy + (u - top_cul)*(right_row - left_row + 1) + (v - left_row)) = 0;
 
-			//printf("%d\n",(u - top_cul)*(right_row - left_row + 1) + (v-left_row)) ;//test ¿ë=====================
+			//printf("%d\n",(u - top_cul)*(right_row - left_row + 1) + (v-left_row)) ;//test ìš©=====================
 
 			block_pre = pre_block_tempo(before_dec_img, i, j, v, u); //v = mv_x, u = mv_y
 			sum = 0;
@@ -766,22 +766,22 @@ int* mv_finder(unsigned char* current_img, unsigned char* before_dec_img, int i,
 	}
 
 	min = *(energy);
-	*(motion_vector) = left_row; //x ÁÂÇ¥
-	*(motion_vector + 1) = top_cul; //y ÁÂÇ¥
+	*(motion_vector) = left_row; //x ì¢Œí‘œ
+	*(motion_vector + 1) = top_cul; //y ì¢Œí‘œ
 	for (u = top_cul; u <= bottom_cul; u++) {
 		for (v = left_row; v <= right_row; v++) {
 			if (min >= *(energy + (u - top_cul)*(right_row - left_row + 1) + (v - left_row))) {
 				min = *(energy + (u - top_cul)*(right_row - left_row + 1) + (v - left_row));
 				*(motion_vector) = v;
 				*(motion_vector + 1) = u;
-				//printf("x = %d, y = %d\n", *(motion_vector), *(motion_vector + 1));//test ¿ë======================
+				//printf("x = %d, y = %d\n", *(motion_vector), *(motion_vector + 1));//test ìš©======================
 			}
 		}
 	}
-	//printf("x = %d, y = %d\n", *(motion_vector), *(motion_vector + 1));//test ¿ë======================
-	// °¡Àå energy °¡ ÀÛÀº ºí·ÏÀ» Ã£¾Æ, ±× ºí·Ï¿¡¼­ ÇöÀç ºí·ÏÀÇ À§Ä¡ ±îÁöÀÇ ¸ğ¼Çº¤ÅÍ¸¦ ±¸ÇÑ´Ù.
-	//printf("0¹øÂ° ¿¡³ÊÁö = %d, 1¹øÂ° ¿¡³ÊÁö = %d \n", *(energy), *(energy + 1));
-	//printf("dv\n");//test ¿ë====================
+	//printf("x = %d, y = %d\n", *(motion_vector), *(motion_vector + 1));//test ìš©======================
+	// ê°€ì¥ energy ê°€ ì‘ì€ ë¸”ë¡ì„ ì°¾ì•„, ê·¸ ë¸”ë¡ì—ì„œ í˜„ì¬ ë¸”ë¡ì˜ ìœ„ì¹˜ ê¹Œì§€ì˜ ëª¨ì…˜ë²¡í„°ë¥¼ êµ¬í•œë‹¤.
+	//printf("0ë²ˆì§¸ ì—ë„ˆì§€ = %d, 1ë²ˆì§¸ ì—ë„ˆì§€ = %d \n", *(energy), *(energy + 1));
+	//printf("dv\n");//test ìš©====================
 	free(energy);
 	free(block_pre);
 	free(block);
@@ -801,11 +801,11 @@ unsigned char* decoding_tempo(unsigned char* before_dec_img, int* mv_x, int* mv_
 	reconstruct_img = (unsigned char*)malloc(sizeof(unsigned char)*(org_row * org_col));
 	block_pre = (unsigned char*)malloc(sizeof(unsigned char)*(N_tempo*N_tempo));
 
-	invQ_difference = sampling_error(Q_diff, 1, org_row, org_col); //¿ª¾çÀÚÈ­
+	invQ_difference = sampling_error(Q_diff, 1, org_row, org_col); //ì—­ì–‘ìí™”
 
 	for (i = 0; i < org_col; i += N_tempo) {
 		for (j = 0; j < org_row; j += N_tempo) {
-			//printf("i =  %d, j = %d\n",i, j);//test ¿ë===========
+			//printf("i =  %d, j = %d\n",i, j);//test ìš©===========
 			block_pre = pre_block_tempo(before_dec_img, i, j, *(mv_x + i / N_tempo*(org_row / N_tempo) + j / N_tempo), *(mv_y + i / N_tempo*(org_row / N_tempo) + j / N_tempo));
 			for (u = 0; u < N_tempo; u++) {
 				for (v = 0; v < N_tempo; v++) {
@@ -837,7 +837,7 @@ unsigned char* encoding_tempo(unsigned char* current_img, unsigned char* before_
 	int u, v;
 	unsigned char* block_pre = NULL;
 	unsigned char * reconstruct_img = NULL;
-	unsigned char * pre_img = NULL;//test ¿ë===========
+	unsigned char * pre_img = NULL;//test ìš©===========
 	int * mv_x = NULL;
 	int * mv_y = NULL;
 	int * a_mv = NULL;
@@ -845,7 +845,7 @@ unsigned char* encoding_tempo(unsigned char* current_img, unsigned char* before_
 
 	block_pre = (unsigned char*)malloc(sizeof(unsigned char)*(N_tempo*N_tempo));
 	reconstruct_img = (unsigned char*)malloc(sizeof(unsigned char)*(org_row * org_col));
-	pre_img = (unsigned char*)malloc(sizeof(unsigned char)*(org_row * org_col));//test ¿ë=============
+	pre_img = (unsigned char*)malloc(sizeof(unsigned char)*(org_row * org_col));//test ìš©=============
 	mv_x = (int*)malloc(sizeof(int)*(org_row * org_col / (N_tempo*N_tempo)));
 	mv_y = (int*)malloc(sizeof(int)*(org_row * org_col / (N_tempo*N_tempo)));
 	a_mv = (int*)malloc(sizeof(int) * 2);
@@ -854,35 +854,35 @@ unsigned char* encoding_tempo(unsigned char* current_img, unsigned char* before_
 
 	for (i = 0; i < org_col; i += N_tempo) {
 		for (j = 0; j < org_row; j += N_tempo) {
-			//printf("111\n");//test ¿ë====================
+			//printf("111\n");//test ìš©====================
 			a_mv = mv_finder(current_img, before_dec_img, i, j);
 			*(mv_x + (i / N_tempo)*(org_row / N_tempo) + (j / N_tempo)) = *(a_mv);
 			*(mv_y + (i / N_tempo)*(org_row / N_tempo) + (j / N_tempo)) = *(a_mv + 1);
 			block_pre = pre_block_tempo(before_dec_img, i, j, *(a_mv), *(a_mv + 1));
-			//printf("222\n");//test ¿ë====================
+			//printf("222\n");//test ìš©====================
 			for (u = 0; u < N_tempo; u++) {
 				for (v = 0; v < N_tempo; v++) {
 					*(difference + (i + u)*org_row + (j + v)) = *(current_img + (i + u)*org_row + (j + v)) - *(block_pre + u*N_tempo + v);
-					*(pre_img + (i + u)*org_row + (j + v)) = *(block_pre + u*N_tempo + v);//test ¿ë===============
+					*(pre_img + (i + u)*org_row + (j + v)) = *(block_pre + u*N_tempo + v);//test ìš©===============
 				}
 			}
 		}
 	}
-	//printf("333\n");//test ¿ë====================
+	//printf("333\n");//test ìš©====================
 	difference = sampling_error(difference, 0, org_row, org_col);
-	//printf("444\n");//test ¿ë====================
+	//printf("444\n");//test ìš©====================
 	reconstruct_img = decoding_tempo(before_dec_img, mv_x, mv_y, difference);
-	//printf("555\n");//test ¿ë====================
-	WriteFile_I(mv_x, MV_x_file, org_row / N_tempo, org_col / N_tempo);//motion vector ÀÇ x°ª¸¸ ÀúÀåÇÏ±â
-	WriteFile_I(mv_y, MV_y_file, org_row / N_tempo, org_col / N_tempo);//motion vector ÀÇ y°ª¸¸ ÀúÀåÇÏ±â
-	WriteFile_I(difference, Quantization_file, org_row, org_col);//differency block ÀúÀåÇÏ±â
+	//printf("555\n");//test ìš©====================
+	WriteFile_I(mv_x, MV_x_file, org_row / N_tempo, org_col / N_tempo);//motion vector ì˜ xê°’ë§Œ ì €ì¥í•˜ê¸°
+	WriteFile_I(mv_y, MV_y_file, org_row / N_tempo, org_col / N_tempo);//motion vector ì˜ yê°’ë§Œ ì €ì¥í•˜ê¸°
+	WriteFile_I(difference, Quantization_file, org_row, org_col);//differency block ì €ì¥í•˜ê¸°
 	WriteFile_U(pre_img, prediction_defore , org_row, org_col);
 	free(mv_x);
 	free(mv_y);
 	free(a_mv);
 	free(difference);
 	free(block_pre);
-	free(pre_img);//test ¿ë=================
+	free(pre_img);//test ìš©=================
 	return reconstruct_img;
 	free(reconstruct_img);
 }
@@ -903,7 +903,7 @@ double sum_of_mv(int* mv_x, int* mv_y) {
 	return sum;
 }
 
-//main ÇÔ¼ö 
+//main í•¨ìˆ˜ 
 int main(void) {
 	unsigned char* buff_img = NULL;
 	unsigned char* encoding_current = NULL;
@@ -922,7 +922,7 @@ int main(void) {
 	before = clock();
 	before1 = clock();
 	buff_img = readFile(in_file_bf, org_row, org_col);
-	recontruct_before = encoding_intra(buff_img); // encoding : ¿øº» ¿µ»óÀ» ¹Ş¾Æ error ¿Í label Ãâ·Â
+	recontruct_before = encoding_intra(buff_img); // encoding : ì›ë³¸ ì˜ìƒì„ ë°›ì•„ error ì™€ label ì¶œë ¥
 
 	after1 = clock();
 	Time1 = (double)(after1 - before1);
@@ -940,16 +940,16 @@ int main(void) {
 
 	if (use_psnr == 1) {
 		printf("===========before image intra prediction===========");
-		MSE_f(recontruct_before, in_file_bf); // PSNR, MSE °è»ê, in_file°ú ºñ±³
+		MSE_f(recontruct_before, in_file_bf); // PSNR, MSE ê³„ì‚°, in_fileê³¼ ë¹„êµ
 		printf("===========after image temporal prediction===========");
-		MSE_f(encoding_current, in_file_af); // PSNR, MSE °è»ê, in_file°ú ºñ±³
+		MSE_f(encoding_current, in_file_af); // PSNR, MSE ê³„ì‚°, in_fileê³¼ ë¹„êµ
 
 	}
 
 	mv_x = ReadFile_int(MV_x_file, org_row / N_tempo, org_col / N_tempo);
 	mv_y = ReadFile_int(MV_y_file, org_row / N_tempo, org_col / N_tempo);
 	sumofmv = sum_of_mv(mv_x, mv_y);
-	printf("MVµéÀÇ Àı´ë°ªÀÇ sum : %f", sumofmv);
+	printf("MVë“¤ì˜ ì ˆëŒ€ê°’ì˜ sum : %f", sumofmv);
 
 	printf("\ndefore image encoding time : %.4f (msec)\n", Time1);
 	printf("\ncurrent image encoding time : %.4f (msec)\n", Time2);
