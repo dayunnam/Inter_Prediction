@@ -6,30 +6,30 @@
 # define org_row  720
 # define org_col  480
 # define sizebyte 1
-//# define in_file_bf "football_bf.y" //mse ¸¦ ±¸ÇÏ±â À§ÇÑ ¿ëµµ
-//# define in_file_af "football_af.y" //mse ¸¦ ±¸ÇÏ±â À§ÇÑ ¿ëµµ
-//# define reconstruct_file_bf_encoder "0_before_encoding.y"//mismatch ¸¦ È®ÀÎÇÏ±â À§ÇÑ ¿ëµµ
-# define reconstruct_file_bf_decoder "0_before_decoding.y" //decoding ÀÇ °á°ú
+//# define in_file_bf "football_bf.y" //mse ë¥¼ êµ¬í•˜ê¸° ìœ„í•œ ìš©ë„
+//# define in_file_af "football_af.y" //mse ë¥¼ êµ¬í•˜ê¸° ìœ„í•œ ìš©ë„
+//# define reconstruct_file_bf_encoder "0_before_encoding.y"//mismatch ë¥¼ í™•ì¸í•˜ê¸° ìœ„í•œ ìš©ë„
+# define reconstruct_file_bf_decoder "0_before_decoding.y" //decoding ì˜ ê²°ê³¼
 
 # define label_file "1_label"
 # define error_file "2_error"
 # define MV_x_file "3_motion_vector_x.y"
 # define MV_y_file "4_motion_vector_y.y"
-# define Quantization_file "5_¸ò.y"
+# define Quantization_file "5_ëª«.y"
 
-//# define current_encoding_file "0_current_encodiong.y"//mismatch ¸¦ È®ÀÎÇÏ±â À§ÇÑ ¿ëµµ
-# define current_decoding_file "0_current_decodiong.y"//decoding ÀÇ °á°ú
+//# define current_encoding_file "0_current_encodiong.y"//mismatch ë¥¼ í™•ì¸í•˜ê¸° ìœ„í•œ ìš©ë„
+# define current_decoding_file "0_current_decodiong.y"//decoding ì˜ ê²°ê³¼
 
-# define N_intra 4// °ø°£¿¹Ãø block
-# define N_tempo 16// ½Ã°£¿¹Ãø block
-# define use_psnr 1//(0 : psnr ÃøÁ¤ x   , 1 : psnr ÃøÁ¤ o ) 
+# define N_intra 4// ê³µê°„ì˜ˆì¸¡ block
+# define N_tempo 16// ì‹œê°„ì˜ˆì¸¡ block
+# define use_psnr 1//(0 : psnr ì¸¡ì • x   , 1 : psnr ì¸¡ì • o ) 
 # define FALSE 0
 # define TRUE 1
-# define sample 1.75 // ¾çÀÚÈ­ °è¼ö
-# define pre_N 9 // ¿¹Ãø ¹æÇâ (4 or 9)
+# define sample 1.75 // ì–‘ìí™” ê³„ìˆ˜
+# define pre_N 9 // ì˜ˆì¸¡ ë°©í–¥ (4 or 9)
 
 
-//ÆÄÀÏ ÀĞ±â
+//íŒŒì¼ ì½ê¸°
 unsigned char* ReadFile(char* s, int size_row, int size_col) {
 	//FILE* input_img = fopen(in_file, "rb");
 	unsigned char* org_img = NULL;
@@ -37,7 +37,7 @@ unsigned char* ReadFile(char* s, int size_row, int size_col) {
 	fopen_s(&input_img, s, "rb");
 	org_img = (unsigned char*)malloc(sizeof(unsigned char)*(size_row*size_col));
 	if (input_img == NULL) {
-		puts("input ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ ");
+		puts("input íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨ ");
 		return NULL;
 	}
 	else {
@@ -49,7 +49,7 @@ unsigned char* ReadFile(char* s, int size_row, int size_col) {
 	free(org_img);
 }
 
-//ÆÄÀÏ ÀĞ±â
+//íŒŒì¼ ì½ê¸°
 int* ReadFile_int(char* s, int size_row, int size_col) {
 	//FILE* input_img = fopen(in_file, "rb");
 	FILE* input;
@@ -58,7 +58,7 @@ int* ReadFile_int(char* s, int size_row, int size_col) {
 	fopen_s(&input, s, "rb");
 	org = (int*)malloc(sizeof(int)*(org_row*org_col));
 	if (input == NULL) {
-		puts("input ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ ");
+		puts("input íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨ ");
 		return NULL;
 	}
 	else {
@@ -70,13 +70,13 @@ int* ReadFile_int(char* s, int size_row, int size_col) {
 	free(org);
 }
 
-//unsigned char Çü ÆÄÀÏ ¾²±â
+//unsigned char í˜• íŒŒì¼ ì“°ê¸°
 unsigned char* WriteFile_U(unsigned char* out_img, char* s) {
 	//FILE* output_img = fopen(out_file, "wb");
 	FILE* output_img;
 	fopen_s(&output_img, s, "wb");
 	if (output_img == NULL) {
-		puts("output ÆÄÀÏ ¿ÀÇÂ ½ÇÆĞ");
+		puts("output íŒŒì¼ ì˜¤í”ˆ ì‹¤íŒ¨");
 		return NULL;
 	}
 	else {
@@ -88,7 +88,7 @@ unsigned char* WriteFile_U(unsigned char* out_img, char* s) {
 
 }
 
-//MSE & PSNR **ÀÔ·ÂÀº uchar Çü**
+//MSE & PSNR **ì…ë ¥ì€ uchar í˜•**
 double MSE_f(unsigned char* sp_img, char* s)
 {
 	double MSE;
@@ -118,14 +118,14 @@ double MSE_f(unsigned char* sp_img, char* s)
 	return MSE;
 }
 
-//(¹ÌÈ®ÀÎ)mismatch È®ÀÎ
+//(ë¯¸í™•ì¸)mismatch í™•ì¸
 int ismismatch(unsigned char* en_img, unsigned char* de_img) {
 	int i, j;
 	for (i = 0; i < org_col; i++)
 	{
 		for (j = 0; j< org_row; j++) {
 			if (*(en_img + i*org_row + j) != *(de_img + i*org_row + j)) {
-				//printf("%d ¿­ %d Çà : mismatch %d \n", i, j, *(en_img + i*org_row + j) - *(de_img + i*org_row + j));//test ¿ë===========
+				//printf("%d ì—´ %d í–‰ : mismatch %d \n", i, j, *(en_img + i*org_row + j) - *(de_img + i*org_row + j));//test ìš©===========
 				return TRUE;
 			}
 		}
@@ -134,8 +134,8 @@ int ismismatch(unsigned char* en_img, unsigned char* de_img) {
 	return FALSE;
 }
 
-//ºí·ÏÀÇ ÀÌ¿ôÇÑ ÇÈ¼¿ Ãà·ÂÇÏ±â
-unsigned char* neighbor_pixels(unsigned char* org_img, int i, int j) { // i = Çà, j = ¿­
+//ë¸”ë¡ì˜ ì´ì›ƒí•œ í”½ì…€ ì¶•ë ¥í•˜ê¸°
+unsigned char* neighbor_pixels(unsigned char* org_img, int i, int j) { // i = í–‰, j = ì—´
 	int u, v;
 	int w;
 	unsigned char* neighbor_pix = NULL;
@@ -241,13 +241,13 @@ unsigned char* pre_block_intra(unsigned char* neighbor_pix, int type, int ii, in
 			}
 			m = (unsigned char)(sum / ((double)N_intra*2.0) + 0.5);
 		}
-		else if (ii - 1 < 0 && jj - 1 >= 0) { // ¼¼·Î ¸·´ë = 128
+		else if (ii - 1 < 0 && jj - 1 >= 0) { // ì„¸ë¡œ ë§‰ëŒ€ = 128
 			for (i = 0; i < N_intra; i++) {
 				sum += *(neighbor_pix + i);
 			}
 			m = (unsigned char)(sum / ((double)N_intra) + 0.5);
 		}
-		else if (ii - 1 >= 0 && jj - 1 < 0) { // °¡·Î ¸·´ë = 128
+		else if (ii - 1 >= 0 && jj - 1 < 0) { // ê°€ë¡œ ë§‰ëŒ€ = 128
 			for (i = 0; i < N_intra; i++) {
 				sum += *(neighbor_pix + N_intra + i);
 			}
@@ -415,12 +415,12 @@ unsigned char* pre_block_intra(unsigned char* neighbor_pix, int type, int ii, in
 	free(block);
 }
 
-//error sampling, ¾çÀÚÈ­ °è¼ö¸¦ ³ª´²ÁÜ
+//error sampling, ì–‘ìí™” ê³„ìˆ˜ë¥¼ ë‚˜ëˆ ì¤Œ
 int* sampling_error(int* error, int type, int size_row, int size_col) {
 	int n;
 	int* error_d = NULL;
 	error_d = (int*)malloc(sizeof(int)*(size_row*size_col));
-	//type ÀÌ 0ÀÌ¸é error ¸¦ ¾çÀÚÈ­¸¸ ÇÔ
+	//type ì´ 0ì´ë©´ error ë¥¼ ì–‘ìí™”ë§Œ í•¨
 	if (type == 0) {
 		for (n = 0; n < size_row*size_col; n++) {
 			*(error_d + n) = (int)((double)(*(error + n)) / sample);
@@ -428,7 +428,7 @@ int* sampling_error(int* error, int type, int size_row, int size_col) {
 		return error_d;
 	}
 
-	//type = 1 ¾çÀÚÈ­µÈ ¿¡·¯¸¦ ´Ù½Ã º¹±¸ÇÔ 
+	//type = 1 ì–‘ìí™”ëœ ì—ëŸ¬ë¥¼ ë‹¤ì‹œ ë³µêµ¬í•¨ 
 	else if (type == 1) {
 		for (n = 0; n < size_row*size_col; n++) {
 			//*(error_d + n) = (int)((double)(*(error + n))*sample + 0.5);
@@ -448,7 +448,7 @@ int* sampling_error(int* error, int type, int size_row, int size_col) {
 	return NULL;
 }
 
-//test ¿ë====================
+//test ìš©====================
 void sort_Label(unsigned char* Label_arr) {
 
 	int* label_N = NULL;
@@ -476,7 +476,7 @@ void sort_Label(unsigned char* Label_arr) {
 	free(label_N);
 }
 
-//test ¿ë====================
+//test ìš©====================
 void sort_Error(int* Error) {
 
 	int* error_N = NULL;
@@ -504,9 +504,9 @@ void sort_Error(int* Error) {
 	free(error_N);
 }
 
-//¾çÀÚÈ­µÈ error¿Í label À» ÀÌ¿ëÇÏ¿©, decoding ÇÏ±â
+//ì–‘ìí™”ëœ errorì™€ label ì„ ì´ìš©í•˜ì—¬, decoding í•˜ê¸°
 unsigned char* decoding_intra(unsigned char* Label_arr, int* Error) {
-	unsigned char* res_img = NULL; //º¹±¸ ¿µ»ó
+	unsigned char* res_img = NULL; //ë³µêµ¬ ì˜ìƒ
 	unsigned char* neighbor_pix = NULL;
 	unsigned char* block_pre = NULL;
 
@@ -519,10 +519,10 @@ unsigned char* decoding_intra(unsigned char* Label_arr, int* Error) {
 	neighbor_pix = (unsigned char*)malloc(sizeof(unsigned char)*(N_intra + pre_N)); //8 or 13
 	block_pre = (unsigned char*)malloc(sizeof(unsigned char)*(N_intra*N_intra));
 
-	//sort_Error(Error); //test ¿ë==========================
+	//sort_Error(Error); //test ìš©==========================
 
-	Error = sampling_error(Error, 1, org_row, org_col); //¾çÀÚÈ­µÈ error º¹±¸
-														//sort_Error(Error); //test ¿ë==========================
+	Error = sampling_error(Error, 1, org_row, org_col); //ì–‘ìí™”ëœ error ë³µêµ¬
+														//sort_Error(Error); //test ìš©==========================
 	for (i = 0; i < org_col; i += N_intra) {
 		for (j = 0; j < org_row; j += N_intra) {
 			neighbor_pix = neighbor_pixels(res_img, j, i);
@@ -541,7 +541,7 @@ unsigned char* decoding_intra(unsigned char* Label_arr, int* Error) {
 			}
 		}
 	}
-	//¿¹Ãø ¿µ»ó Ã£±â
+	//ì˜ˆì¸¡ ì˜ìƒ ì°¾ê¸°
 	return(res_img);
 	free(res_img);
 	free(neighbor_pix);
@@ -549,7 +549,7 @@ unsigned char* decoding_intra(unsigned char* Label_arr, int* Error) {
 }
 
 //=============================================================================================================================
-// (¹Ì¿Ï)motion vector Á¤º¸¸¦ ¹ŞÀ¸¸é, ¿¹Ãø ºí·Ï Ãâ·Â
+// (ë¯¸ì™„)motion vector ì •ë³´ë¥¼ ë°›ìœ¼ë©´, ì˜ˆì¸¡ ë¸”ë¡ ì¶œë ¥
 unsigned char* pre_block_tempo(unsigned char* before_dec_img, int i, int j, int mv_x, int mv_y) {
 	unsigned char* block_pre = NULL;
 	int u, v;
@@ -576,11 +576,11 @@ unsigned char* decoding_tempo(unsigned char* before_dec_img, int* mv_x, int* mv_
 	reconstruct_img = (unsigned char*)malloc(sizeof(unsigned char)*(org_row * org_col));
 	block_pre = (unsigned char*)malloc(sizeof(unsigned char)*(N_tempo*N_tempo));
 
-	invQ_difference = sampling_error(Q_diff, 1, org_row, org_col); //¿ª¾çÀÚÈ­
+	invQ_difference = sampling_error(Q_diff, 1, org_row, org_col); //ì—­ì–‘ìí™”
 
 	for (i = 0; i < org_col; i += N_tempo) {
 		for (j = 0; j < org_row; j += N_tempo) {
-			//printf("i =  %d, j = %d\n",i, j);//test ¿ë===========
+			//printf("i =  %d, j = %d\n",i, j);//test ìš©===========
 			block_pre = pre_block_tempo(before_dec_img, i, j, *(mv_x + i / N_tempo*(org_row / N_tempo) + j / N_tempo), *(mv_y + i / N_tempo*(org_row / N_tempo) + j / N_tempo));
 			for (u = 0; u < N_tempo; u++) {
 				for (v = 0; v < N_tempo; v++) {
@@ -609,7 +609,7 @@ unsigned char* decoding_tempo(unsigned char* before_dec_img, int* mv_x, int* mv_
 
 
 
-//(¹ÌÈ®ÀÎ)main ÇÔ¼ö
+//(ë¯¸í™•ì¸)main í•¨ìˆ˜
 int main(void) {
 	unsigned char* before_renconstruct_img = NULL;
 	unsigned char* current_renconstruct_img = NULL;
@@ -638,12 +638,12 @@ int main(void) {
 	 before1 = clock();
 	Label_arr = ReadFile(label_file, org_row / N_intra, org_col / N_intra);
 	Error = ReadFile_int(error_file, org_row, org_col);
-	sort_Label(Label_arr); // test ¿ë =======================
+	sort_Label(Label_arr); // test ìš© =======================
 	//printf("==========Error===================");
-	//sort_Error(Error); //test ¿ë========================
+	//sort_Error(Error); //test ìš©========================
 	//printf("==========difference===================");
-	//sort_Error(difference); //test ¿ë========================
-	before_renconstruct_img = decoding_intra(Label_arr, Error); // decoding : error ¿Í label À» ¹Ş¾Æ º¹±¸ ¿µ»ó Ãâ·Â
+	//sort_Error(difference); //test ìš©========================
+	before_renconstruct_img = decoding_intra(Label_arr, Error); // decoding : error ì™€ label ì„ ë°›ì•„ ë³µêµ¬ ì˜ìƒ ì¶œë ¥
 	after1 = clock();
 
 	before2 = clock();
@@ -658,8 +658,8 @@ int main(void) {
 	Time1 = (double)(after1 - before1);
 	Time2 = (double)(after2 - before2);
 	total_time = (double)(after - before);
-	WriteFile_U(before_renconstruct_img, reconstruct_file_bf_decoder); //º¹¿ø ¿µ»ó Ãâ·Â
-	WriteFile_U(current_renconstruct_img, current_decoding_file); //º¹¿ø ¿µ»ó Ãâ·Â
+	WriteFile_U(before_renconstruct_img, reconstruct_file_bf_decoder); //ë³µì› ì˜ìƒ ì¶œë ¥
+	WriteFile_U(current_renconstruct_img, current_decoding_file); //ë³µì› ì˜ìƒ ì¶œë ¥
 
 	/*
 	encoding_img = ReadFile(reconstruct_file_bf_encoder, org_row, org_col);
@@ -668,7 +668,7 @@ int main(void) {
 
 	if (use_psnr == 1) {
 		printf("===========before image intra prediction===========");
-		MSE_f(before_renconstruct_img, in_file_bf); // PSNR, MSE °è»ê, in_file°ú ºñ±³
+		MSE_f(before_renconstruct_img, in_file_bf); // PSNR, MSE ê³„ì‚°, in_fileê³¼ ë¹„êµ
 		printf("===========after image temporal prediction===========");
 		MSE_f(current_renconstruct_img, in_file_af);
 	}
@@ -676,20 +676,20 @@ int main(void) {
 	printf("===========before image intra prediction===========");
 	mismatch = ismismatch(encoding_img, decoding_img);
 	if (mismatch == FALSE) {
-		printf("\nmismatch ¾øÀ½\n");
+		printf("\nmismatch ì—†ìŒ\n");
 	}
 	else
-		printf("\nmismatch ¹ß»ı\n");
+		printf("\nmismatch ë°œìƒ\n");
 	printf("===========after image temporal prediction===========");
 
 	encoding_img = ReadFile(current_encoding_file, org_row, org_col);
 	decoding_img = ReadFile(current_decoding_file, org_row, org_col);
 	mismatch = ismismatch(encoding_img, decoding_img);
 	if (mismatch == FALSE) {
-		printf("\nmismatch ¾øÀ½\n");
+		printf("\nmismatch ì—†ìŒ\n");
 	}
 	else
-		printf("\nmismatch ¹ß»ı\n");
+		printf("\nmismatch ë°œìƒ\n");
     */
 
 	printf("\ntime : %.4f (msec)\n", Time1);
